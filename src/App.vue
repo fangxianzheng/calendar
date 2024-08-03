@@ -12,7 +12,10 @@
       :start="start"
       :end="end"
       :defaultDate="defaultDate"
+      :disable="disable"
+      :extra="extra"
       :isConsecutive="isConsecutive"
+      :festival="festival"
       @complete="complete"
     ></calendar>
   </div>
@@ -31,7 +34,10 @@ export default {
       start: '',
       end: '',
       defaultDate: '',
-      isConsecutive: false
+      isConsecutive: false,
+      disable: function(){},
+      extra: function(){},
+      festival: []
     }
   },
   methods: {
@@ -46,10 +52,37 @@ export default {
       
     },
     clice2() {
-      this.start = '2020-01-01'
-      this.end = '2020-01-31'
-      this.defaultDate = '2025-06-15'
+      this.start = '2024-01-01'
+      this.end = '2024-03-20'
+      this.defaultDate = '2024-02-15'
       this.isConsecutive = true
+      this.disable = function (day) {
+        return day.str == '2024-01-10'
+      }
+      this.extra = function (day) {
+
+        if (day.week == 1) {
+          return {
+            good: '牛马'
+          }
+        } else {
+          return {}
+        }
+      }
+      this.festival = [
+        {
+          date: '2024-01-01',
+          text: '元旦'
+        }, 
+        {
+          date: '2024-02-10',
+          text: '春节'
+        }, 
+        {
+          date: '2024-02-24',
+          text: '元宵节'
+        },
+      ]
       setTimeout(() => {
         this.$refs.calendar.show()
       })

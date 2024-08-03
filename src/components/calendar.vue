@@ -15,11 +15,13 @@
                 dayObj.selected ? 'active':'', 
                 dayObj.selectedStart? 'active-start':'', 
                 dayObj.selectedEnd? 'active-end':'', 
-
+                dayObj.disable ? 'disable':'', 
               ]" 
               @click="select(dayObj)"
               >
               <div >{{day}}</div>
+              <div v-if="dayObj.festival">{{dayObj.festival.text}}</div>
+              <div v-if="dayObj.extra && dayObj.extra.good">{{dayObj.extra.good}}</div>
 
             </div>
           </template>
@@ -47,6 +49,24 @@ export default {
     isConsecutive:{
       type: Boolean,
       default: false
+    },
+    disable: {
+      type: Function,
+      default: () => {
+        return function (){};
+      }
+    },
+    extra: {
+      type: Function,
+      default: () => {
+        return function (){};
+      }
+    },
+    festival: {
+      type: Array,
+      default: () => {
+        return [];
+      }
     },
     defaultDate: {
       type: String,
@@ -77,14 +97,21 @@ export default {
       this.calendar.select(day)
       
       this.$emit('complete', day)
+
+      // console.log(this.calendar.selectSatrtDay)
+      // console.log(this.calendar.selectEndDay)
     },
     show () {
+      console.log(this.festival)
 
       this.calendar = new Calendar({  
         start: this.start,
         end: this.end,
         defaultDate: this.defaultDate,
-        isConsecutive: this.isConsecutive
+        isConsecutive: this.isConsecutive,
+        disable: this.disable,
+        festival: this.festival,
+        extra: this.extra
       })
       this.dateData = this.calendar.data
 
@@ -139,5 +166,8 @@ export default {
 }
 .active-end{
   background-color: green;
+}
+.disable{
+  background-color: rgb(232, 232, 232);
 }
 </style>

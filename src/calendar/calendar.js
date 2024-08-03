@@ -2,15 +2,18 @@ import  DateData  from './dateData.js'
 
 
 class Calendar {
-  constructor({start, end, defaultDate, isConsecutive}) {
+  constructor({start, end, defaultDate, isConsecutive, disable, festival, extra}) {
     this.dateData = new DateData(start, end)
     this.isConsecutive = isConsecutive
     this.selectCounter = 0
+    this.disable = disable
+    this.festival = festival
+    this.extra = extra
     this.init()
   }
   init() {
     this.data = this.dateData.data
-
+    this.loop()
   }
   select (day) {
     this.selectCounter++
@@ -23,6 +26,7 @@ class Calendar {
       } else if (this.selectCounter === 2) {
         this.selectEndDay = day
 
+        // 当后选的日期早于前选的日期时，交换两个日期
         const selectSatrtDayStr = this.numberStr(this.selectSatrtDay.str)
         const selectEndDayStr = this.numberStr(this.selectEndDay.str)
         if (selectEndDayStr < selectSatrtDayStr) {
@@ -30,7 +34,6 @@ class Calendar {
           this.selectSatrtDay = this.deepClone(this.selectEndDay)
           this.selectEndDay = startCopy
         }
-
 
       }
       
@@ -86,45 +89,76 @@ class Calendar {
     const monthStr = month < 10? "0" + month : month
     const dayStr = day < 10? "0" + day : day
 
-    if (!this.isConsecutive) {
+    // 不可用日期
+    if (this.disable) {
+      if (this.disable(dayObj)) {
+        dayObj.disable = true;
+      }
+    }
 
-      if (this.numberStr(this.selectDay.str) === `${year}${monthStr}${dayStr}`) {
-        dayObj.selected = true
+    // 节假日
+    if (this.festival && this.festival.length) {
+      const oneFestival= this.festival.find((festival) => {
+        return festival.date === `${year}-${monthStr}-${dayStr}`
+      })
+      if (oneFestival) {
+        dayObj.festival = oneFestival
+      }
+
+    }
+
+    // 额外信息
+    if (this.extra) {
+      dayObj.extra = this.extra(dayObj);
+    }
+
+    // 选日期时才执行
+    if (this.selectDay || this.selectSatrtDay || this.selectEndDay) {
+      if (!this.isConsecutive) {
+
+        if (this.numberStr(this.selectDay.str) === `${year}${monthStr}${dayStr}`) {
+          dayObj.selected = true
+    
+        } else{
+          dayObj.selected = false
+        }
+      } else {
+        const selectSatrtDayStr = this.numberStr(this.selectSatrtDay.str)
+        
+        if (this.selectCounter == 1) {
+          if (`${year}${monthStr}${dayStr}` === selectSatrtDayStr) {
+            dayObj.selectedStart = true
+            dayObj.selected = true
+          } else {
+            dayObj.selectedStart = false
+            dayObj.selectedEnd = false
+            dayObj.selected = false
+          }
+        } else if (this.selectCounter == 2) {
   
-      } else{
-        dayObj.selected = false
-      }
-    } else {
-      const selectSatrtDayStr = this.numberStr(this.selectSatrtDay.str)
-      
-      if (this.selectCounter == 1) {
-        if (`${year}${monthStr}${dayStr}` === selectSatrtDayStr) {
-          dayObj.selectedStart = true
-          dayObj.selected = true
-        } else {
-          dayObj.selectedStart = false
-          dayObj.selectedEnd = false
-          dayObj.selected = false
+          const selectEndDayStr = this.numberStr(this.selectEndDay.str)
+          if (`${year}${monthStr}${dayStr}` === selectSatrtDayStr) {
+            dayObj.selectedStart = true
+            dayObj.selected = true
+  
+            // 当两次都是选的同一个日期时
+            if (`${year}${monthStr}${dayStr}` === selectEndDayStr) {
+              dayObj.selectedEnd = true
+            }
+          } else if (`${year}${monthStr}${dayStr}` > selectSatrtDayStr && `${year}${monthStr}${dayStr}` < selectEndDayStr) {
+            dayObj.selected = true
+          } else if (`${year}${monthStr}${dayStr}` === selectEndDayStr) {
+            dayObj.selectedEnd = true
+            dayObj.selected = true
+          } else {
+            dayObj.selectedStart = false
+            dayObj.selectedEnd = false
+            dayObj.selected = false
+          }
+  
         }
-      } else if (this.selectCounter == 2) {
-
-        const selectEndDayStr = this.numberStr(this.selectEndDay.str)
-        if (`${year}${monthStr}${dayStr}` === selectSatrtDayStr) {
-          dayObj.selectedStart = true
-          dayObj.selected = true
-        } else if (`${year}${monthStr}${dayStr}` > selectSatrtDayStr && `${year}${monthStr}${dayStr}` < selectEndDayStr) {
-          dayObj.selected = true
-        } else if (`${year}${monthStr}${dayStr}` === selectEndDayStr) {
-          dayObj.selectedEnd = true
-          dayObj.selected = true
-        } else {
-          dayObj.selectedStart = false
-          dayObj.selectedEnd = false
-          dayObj.selected = false
-        }
-
+  
       }
-
     }
 
   }
