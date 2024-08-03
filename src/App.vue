@@ -12,7 +12,7 @@
       :start="start"
       :end="end"
       :defaultDate="defaultDate"
-      :isConsecutive="true"
+      :isConsecutive="isConsecutive"
       @complete="complete"
     ></calendar>
   </div>
@@ -30,7 +30,8 @@ export default {
       count: 0,
       start: '',
       end: '',
-      defaultDate: ''
+      defaultDate: '',
+      isConsecutive: false
     }
   },
   methods: {
@@ -38,6 +39,7 @@ export default {
       this.start = '2019-05-01'
       this.end = '2024-11-30'
       this.defaultDate = '2024-06-15'
+      this.isConsecutive = false
       setTimeout(() => {
         this.$refs.calendar.show()
       })
@@ -45,8 +47,9 @@ export default {
     },
     clice2() {
       this.start = '2020-01-01'
-      this.end = '2025-12-31'
+      this.end = '2020-01-31'
       this.defaultDate = '2025-06-15'
+      this.isConsecutive = true
       setTimeout(() => {
         this.$refs.calendar.show()
       })
@@ -55,6 +58,7 @@ export default {
       this.start = '2021-07-01'
       this.end = '2026-10-31'
       this.defaultDate = '2026-06-15'
+      this.isConsecutive = false
       setTimeout(() => {
         this.$refs.calendar.show()
       })

@@ -6,14 +6,24 @@
       <div v-for="(monthObj, month) in yearObj.months" :Key="month">
         <div>{{month}}月</div>
         <div class="days-wrap">
-          <div class="day" 
-            :class="[
-              day == 1 ? `week-${dayObj.week}`:'', 
-              dayObj.selected ? 'active':'', 
-            ]" 
-            v-for="(dayObj, day) in monthObj.days" :key="day">
-            <div @click="select(dayObj)">{{day}}</div>
-          </div>
+          <template
+            v-for="(dayObj, day) in monthObj.days" :key="day"
+          >
+            <div class="day" 
+              :class="[
+                day == 1 ? `week-${dayObj.week}`:'', 
+                dayObj.selected ? 'active':'', 
+                dayObj.selectedStart? 'active-start':'', 
+                dayObj.selectedEnd? 'active-end':'', 
+
+              ]" 
+              @click="select(dayObj)"
+              >
+              <div >{{day}}</div>
+
+            </div>
+          </template>
+
         </div>
 
       </div>
@@ -34,6 +44,10 @@ export default {
       type: String,
       default: '2024-11-30'
     },
+    isConsecutive:{
+      type: Boolean,
+      default: false
+    },
     defaultDate: {
       type: String,
       default: '2024-06-15'
@@ -45,7 +59,8 @@ export default {
       calendar: new Calendar({
         start: this.start,
         end: this.end,
-        defaultDate: this.defaultDate
+        defaultDate: this.defaultDate,
+        isConsecutive: this.isConsecutive
       })
     }
   },
@@ -60,7 +75,7 @@ export default {
   methods: {
     select(day){
       this.calendar.select(day)
-
+      
       this.$emit('complete', day)
     },
     show () {
@@ -68,7 +83,8 @@ export default {
       this.calendar = new Calendar({  
         start: this.start,
         end: this.end,
-        defaultDate: this.defaultDate
+        defaultDate: this.defaultDate,
+        isConsecutive: this.isConsecutive
       })
       this.dateData = this.calendar.data
 
@@ -117,5 +133,11 @@ export default {
 }
 .active{
   background-color: #3b59f0;
+}
+.active-start{
+  background-color: red;
+}
+.active-end{
+  background-color: green;
 }
 </style>

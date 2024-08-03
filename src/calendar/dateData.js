@@ -1,8 +1,7 @@
 class DateData {
-  constructor(start, end, defaultDate) {
+  constructor(start, end) {
     this.start = start;
     this.end = end;
-    this.default = defaultDate;
     this.today = new Date();
     this.init();
   }
@@ -10,18 +9,14 @@ class DateData {
     this.noParams();
     this.start = this.dateRewite(this.start);
     this.end = this.dateRewite(this.end);
-    this.default = this.dateRewite(this.default);
     this.startYear = this.start.getFullYear();
     this.endYear = this.end.getFullYear();
-    this.defaultYear = this.default.getFullYear();
     this.todayYear = this.today.getFullYear();
     this.startMonth = this.start.getMonth() + 1;
     this.endMonth = this.end.getMonth() + 1;
-    this.defaultMonth = this.default.getMonth() + 1;
     this.todayMonth = this.today.getMonth() + 1;
     this.startDay = this.start.getDate();
     this.endDay = this.end.getDate();
-    this.defaultDay = this.default.getDate();
     this.todayDay = this.today.getDate();
     this.startMonthFirstDayWeek = new Date(this.startYear, this.startMonth - 1, 1).getDay();
     this.data = this.looper();
@@ -34,9 +29,6 @@ class DateData {
       let currentDate = new Date();
       currentDate.setFullYear(currentDate.getFullYear() + 1);
       this.end = currentDate;
-    }
-    if (!this.default) {
-      this.default = new Date();
     }
   }
   dateRewite(date) {
@@ -66,9 +58,6 @@ class DateData {
     yearObj.year = year;
     yearObj.months = {};
     yearObj.str = `${year}`;
-    if(year === this.defaultYear){
-      yearObj.isDefault = true
-    }
     return yearObj;
   }
   setMonthObj(year, month) {
@@ -78,9 +67,6 @@ class DateData {
     monthObj.days = {}
     monthObj.str = `${year}-${month}`;
 
-    if(year === this.defaultYear && month === this.defaultMonth) {
-      monthObj.isDefault = true;
-    }
     return monthObj
   }
   setDayObj(year, month, day) {
@@ -96,9 +82,7 @@ class DateData {
     } else if (year === this.endYear && month === this.endMonth && day > this.endDay) {
       dayObj.isDisabled = true;
     }
-    if(year === this.defaultYear && month === this.defaultMonth && day === this.defaultDay) {
-      dayObj.isDefault = true;
-    }
+
     if(year === this.todayYear && month === this.todayMonth && day === this.todayDay) {
       dayObj.isToday = true;
     }
