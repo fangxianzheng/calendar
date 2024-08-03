@@ -98,11 +98,8 @@ export default {
       
       this.$emit('complete', day)
 
-      // console.log(this.calendar.selectSatrtDay)
-      // console.log(this.calendar.selectEndDay)
     },
     show () {
-      console.log(this.festival)
 
       this.calendar = new Calendar({  
         start: this.start,
