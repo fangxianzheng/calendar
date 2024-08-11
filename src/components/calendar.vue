@@ -69,7 +69,7 @@ export default {
       }
     },
     defaultDate: {
-      type: String,
+      type: [String, Array],
       default: '2024-06-15'
     }
   },

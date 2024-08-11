@@ -4,6 +4,7 @@ import  DateData  from './dateData.js'
 class Calendar {
   constructor({start, end, defaultDate, isConsecutive, disable, festival, extra}) {
     this.dateData = new DateData(start, end)
+    this.defaultDate = defaultDate
     this.isConsecutive = isConsecutive
     this.selectCounter = 0
     this.disable = disable
@@ -13,6 +14,7 @@ class Calendar {
   }
   init() {
     this.data = this.dateData.data
+    this.defType = Object.prototype.toString.call(this.defaultDate)
     this.loop()
   }
   select (day) {
@@ -38,6 +40,8 @@ class Calendar {
       }
       
     }
+
+
 
     this.loop()
 
@@ -112,8 +116,34 @@ class Calendar {
       dayObj.extra = this.extra(dayObj);
     }
 
+    // 默认日期
+    if (this.defaultDate) {
+      if (this.defType === '[object Array]') {
+        const defStart = this.numberStr(this.defaultDate[0])
+        const defEnd = this.numberStr(this.defaultDate[1])
+        if (`${year}${monthStr}${dayStr}` === defStart) {
+          dayObj.selectedStart = true
+          dayObj.selected = true
+        }
+        if (`${year}${monthStr}${dayStr}` === defEnd) {
+          dayObj.selectedEnd = true
+          dayObj.selected = true
+        }
+        if (`${year}${monthStr}${dayStr}` > defStart && `${year}${monthStr}${dayStr}` < defEnd) {
+          dayObj.selected = true
+        }
+
+      } else {
+        
+        if (`${year}${monthStr}${dayStr}` === this.numberStr(this.defaultDate)) {
+          dayObj.selected = true
+        }
+      }
+    }
     // 选日期时才执行
     if (this.selectDay || this.selectSatrtDay || this.selectEndDay) {
+
+      // 单选--------------------------------------------------
       if (!this.isConsecutive) {
 
         if (this.numberStr(this.selectDay.str) === `${year}${monthStr}${dayStr}`) {
@@ -122,6 +152,8 @@ class Calendar {
         } else{
           dayObj.selected = false
         }
+
+        // 连续选择--------------------------------------------------
       } else {
         const selectSatrtDayStr = this.numberStr(this.selectSatrtDay.str)
         
@@ -131,9 +163,10 @@ class Calendar {
             dayObj.selected = true
           } else {
             dayObj.selectedStart = false
-            dayObj.selectedEnd = false
             dayObj.selected = false
           }
+          dayObj.selectedEnd = false
+
         } else if (this.selectCounter == 2) {
   
           const selectEndDayStr = this.numberStr(this.selectEndDay.str)
@@ -144,6 +177,8 @@ class Calendar {
             // 当两次都是选的同一个日期时
             if (`${year}${monthStr}${dayStr}` === selectEndDayStr) {
               dayObj.selectedEnd = true
+            } else {
+              dayObj.selectedEnd = false
             }
           } else if (`${year}${monthStr}${dayStr}` > selectSatrtDayStr && `${year}${monthStr}${dayStr}` < selectEndDayStr) {
             dayObj.selected = true

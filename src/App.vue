@@ -7,6 +7,7 @@
       <div @click="clice2">button2</div>
       <div @click="clice3">button3</div>
     </div>
+
     <calendar
       ref="calendar"
       :start="start"
@@ -54,7 +55,7 @@ export default {
     clice2() {
       this.start = '2024-01-01'
       this.end = '2024-03-20'
-      this.defaultDate = '2024-02-15'
+      this.defaultDate = ['2024-02-15', '2024-02-20']
       this.isConsecutive = true
       this.disable = function (day) {
         return day.str == '2024-01-10'
@@ -87,6 +88,7 @@ export default {
         this.$refs.calendar.show()
       })
     },
+
     clice3() {
       this.start = '2021-07-01'
       this.end = '2026-10-31'
