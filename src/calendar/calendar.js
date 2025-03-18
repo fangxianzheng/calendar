@@ -18,8 +18,8 @@ class Calendar {
     this.loop()
   }
   select (day) {
-    // this.defaultDate = null
-    // this.selectCounter++
+    this.defaultDate = null
+    this.selectCounter++
     
     if (!this.isConsecutive) {
       this.selectDay = day
